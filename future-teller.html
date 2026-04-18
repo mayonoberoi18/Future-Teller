@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌌 Cosmic Future Teller</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                  url('https://source.unsplash.com/1600x900/?starry-night,galaxy,cosmos') center/cover no-repeat fixed;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .glow {
+      text-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-white flex items-center justify-center p-6">
+  <div class="max-w-lg w-full">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-5xl font-bold glow mb-2">🌟 Cosmic Future Teller</h1>
+      <p class="text-violet-300 text-lg">Discover your destiny through Numerology & Zodiac</p>
+    </div>
+
+    <!-- Input Card -->
+    <div class="card rounded-3xl shadow-2xl p-8 border border-violet-500/30">
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-violet-300 mb-2">Enter your Birth Date</label>
+        <input type="date" id="dob" 
+               class="w-full bg-slate-900 border border-violet-400/50 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-violet-400 transition">
+      </div>
+
+      <button onclick="tellFuture()" 
+              class="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 py-4 rounded-2xl font-semibold text-lg transition transform hover:scale-105 active:scale-95">
+        Reveal My Future ✨
+      </button>
+    </div>
+
+    <!-- Result Area -->
+    <div id="result" class="hidden mt-8 card rounded-3xl p-8 border border-violet-500/30">
+      <div class="text-center mb-8">
+        <div id="zodiac" class="text-6xl mb-3"></div>
+        <h2 id="sign" class="text-3xl font-bold text-violet-200"></h2>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6 text-center mb-8">
+        <div>
+          <p class="text-xs uppercase tracking-widest text-violet-400">Life Path Number</p>
+          <p id="lifePath" class="text-7xl font-bold text-amber-300"></p>
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-widest text-violet-400">Your Sign</p>
+          <p id="zodiacName" class="text-4xl font-semibold text-white"></p>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <p class="text-violet-300 font-medium mb-2">🔮 From Your Life Path:</p>
+          <p id="lifeMsg" class="text-gray-200 leading-relaxed"></p>
+        </div>
+        <div>
+          <p class="text-violet-300 font-medium mb-2">🌌 From Your Zodiac:</p>
+          <p id="zodiacMsg" class="text-gray-200 leading-relaxed"></p>
+        </div>
+      </div>
+
+      <div class="text-center mt-10 text-xs text-violet-400/70">
+        The stars guide you, but your choices create the future ✨
+      </div>
+    </div>
+
+    <div class="text-center mt-8 text-xs text-white/40">
+      Made with mystery &amp; a little bit of math
+    </div>
+  </div>
+
+  <script>
+    const lifePathDescriptions = {
+      1: "You're a natural leader with strong independence. Future looks bright for new beginnings, entrepreneurship, and achieving big goals.",
+      2: "Diplomatic and intuitive. Your future holds harmony, meaningful relationships, and success through cooperation.",
+      3: "Creative and expressive! Expect joy, artistic opportunities, and fun adventures ahead.",
+      4: "Reliable builder. Stability, strong foundations, and long-term success through discipline await you.",
+      5: "Adventurous freedom-seeker! Big changes, travel, and exciting experiences are coming.",
+      6: "Caring and responsible. Future highlights love, home, community, and nurturing others.",
+      7: "Deep thinker and seeker of truth. Spiritual growth and inner wisdom will guide your path.",
+      8: "Ambitious and powerful! Wealth, achievement, and leadership are in your stars.",
+      9: "Compassionate humanitarian. Giving back and completing important life cycles will bring fulfillment.",
+      11: "Master Intuitive! Highly spiritual and inspirational. Your path involves guiding and enlightening others.",
+      22: "Master Builder! You have the power to create lasting, meaningful impact on the world."
+    };
+
+    const zodiacData = {
+      "Aries": { emoji: "♈", vibe: "Bold and energetic! Your future is full of action, courage, and pioneering new paths." },
+      "Taurus": { emoji: "♉", vibe: "Steady and sensual. Expect growth in comfort, finances, and building lasting value." },
+      "Gemini": { emoji: "♊", vibe: "Curious and adaptable. Communication, learning, and exciting connections ahead!" },
+      "Cancer": { emoji: "♋", vibe: "Nurturing and intuitive. Home, family, and emotional fulfillment will shine." },
+      "Leo": { emoji: "♌", vibe: "Charismatic leader! Creativity, recognition, and joyful spotlight moments coming." },
+      "Virgo": { emoji: "♍", vibe: "Analytical and helpful. Success through skill-building and perfection." },
+      "Libra": { emoji: "♎", vibe: "Balanced and charming. Relationships, beauty, and harmony will flourish." },
+      "Scorpio": { emoji: "♏", vibe: "Intense and transformative. Deep growth, passion, and powerful rebirths await." },
+      "Sagittarius": { emoji: "♐", vibe: "Adventurous philosopher. Travel, learning, and freedom will expand your world." },
+      "Capricorn": { emoji: "♑", vibe: "Ambitious and disciplined. Career achievements and long-term goals will pay off." },
+      "Aquarius": { emoji: "♒", vibe: "Innovative and humanitarian. Unique ideas and positive change are coming." },
+      "Pisces": { emoji: "♓", vibe: "Dreamy and compassionate. Creativity, intuition, and spiritual connections will guide you." }
+    };
+
+    function calculateLifePath(dob) {
+      const [year, month, day] = dob.split('-').map(Number);
+      let total = year + month + day;
+      while (total > 9 && ![11,22,33].includes(total)) {
+        total = String(total).split('').reduce((a,b) => a + Number(b), 0);
+      }
+      return total;
+    }
+
+    function getZodiac(month, day) {
+      const signs = [
+        {name: "Capricorn", start: {m:12,d:22}, end: {m:1,d:19}},
+        {name: "Aquarius", start: {m:1,d:20}, end: {m:2,d:18}},
+        {name: "Pisces", start: {m:2,d:19}, end: {m:3,d:20}},
+        {name: "Aries", start: {m:3,d:21}, end: {m:4,d:19}},
+        {name: "Taurus", start: {m:4,d:20}, end: {m:5,d:20}},
+        {name: "Gemini", start: {m:5,d:21}, end: {m:6,d:20}},
+        {name: "Cancer", start: {m:6,d:21}, end: {m:7,d:22}},
+        {name: "Leo", start: {m:7,d:23}, end: {m:8,d:22}},
+        {name: "Virgo", start: {m:8,d:23}, end: {m:9,d:22}},
+        {name: "Libra", start: {m:9,d:23}, end: {m:10,d:22}},
+        {name: "Scorpio", start: {m:10,d:23}, end: {m:11,d:21}},
+        {name: "Sagittarius", start: {m:11,d:22}, end: {m:12,d:21}}
+      ];
+
+      for (let sign of signs) {
+        if ((month === sign.start.m && day >= sign.start.d) ||
+            (month === sign.end.m && day <= sign.end.d) ||
+            (sign.start.m > sign.end.m && (month >= sign.start.m || month <= sign.end.m))) {
+          return sign.name;
+        }
+      }
+      return "Unknown";
+    }
+
+    function tellFuture() {
+      const dobInput = document.getElementById('dob').value;
+      if (!dobInput) {
+        alert("Please select your birth date 🌟");
+        return;
+      }
+
+      const date = new Date(dobInput);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+
+      const lifePath = calculateLifePath(dobInput);
+      const zodiacSign = getZodiac(month, day);
+      const zodiacInfo = zodiacData[zodiacSign] || {emoji: "✨", vibe: "A wonderful journey awaits you."};
+
+      // Show result
+      document.getElementById('result').classList.remove('hidden');
+      document.getElementById('lifePath').textContent = lifePath;
+      document.getElementById('zodiac').textContent = zodiacInfo.emoji;
+      document.getElementById('sign').textContent = zodiacSign;
+      document.getElementById('zodiacName').textContent = zodiacSign;
+      document.getElementById('lifeMsg').textContent = lifePathDescriptions[lifePath] || "A unique and powerful path is yours to create.";
+      document.getElementById('zodiacMsg').textContent = zodiacInfo.vibe;
+
+      // Scroll to result smoothly
+      document.getElementById('result').scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Bonus: Allow pressing Enter on date input
+    document.getElementById('dob').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') tellFuture();
+    });
+  </script>
+</body>
+</html>
