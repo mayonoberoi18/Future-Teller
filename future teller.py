@@ -6,4 +6,4 @@ with open("future-teller.html", "r", encoding="utf-8") as f:
     html_contentmt = f.read()
 
 # Render it in the app
-components.html(html_content, height=600, scrolling=True)
+components.html( height=600, scrolling=True)
