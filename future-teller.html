@@ -7,16 +7,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+      background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), 
                   url('https://source.unsplash.com/1600x900/?starry-night,galaxy,cosmos') center/cover no-repeat fixed;
       font-family: 'Segoe UI', system-ui, sans-serif;
     }
     .card {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(15, 23, 42, 0.88);
       backdrop-filter: blur(12px);
     }
     .glow {
-      text-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+      text-shadow: 0 0 25px rgba(167, 139, 250, 0.9);
+    }
+    .neon-button {
+      transition: all 0.3s ease;
+    }
+    .neon-button:hover {
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -25,7 +32,7 @@
     <!-- Header -->
     <div class="text-center mb-10">
       <h1 class="text-5xl font-bold glow mb-2">🌟 Cosmic Future Teller</h1>
-      <p class="text-violet-300 text-lg">Discover your destiny through Numerology & Zodiac</p>
+      <p class="text-violet-300 text-lg">Unlock the secrets of your destiny</p>
     </div>
 
     <!-- Input Card -->
@@ -37,8 +44,14 @@
       </div>
 
       <button onclick="tellFuture()" 
-              class="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 py-4 rounded-2xl font-semibold text-lg transition transform hover:scale-105 active:scale-95">
+              class="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 py-4 rounded-2xl font-semibold text-lg neon-button mb-4">
         Reveal My Future ✨
+      </button>
+
+      <!-- Refresh Button -->
+      <button onclick="refreshApp()" 
+              class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 py-3 rounded-2xl font-medium text-sm flex items-center justify-center gap-2 transition">
+        🔄 Refresh & Try Again
       </button>
     </div>
 
@@ -76,8 +89,11 @@
       </div>
     </div>
 
-    <div class="text-center mt-8 text-xs text-white/40">
-      Made with mystery &amp; a little bit of math
+    <!-- Footer Credit -->
+    <div class="text-center mt-10">
+      <p class="text-xs text-white/40">
+        Made by <span class="text-violet-300 font-medium">Mayon Oberoi</span> • illuminati
+      </p>
     </div>
   </div>
 
@@ -162,7 +178,6 @@
       const zodiacSign = getZodiac(month, day);
       const zodiacInfo = zodiacData[zodiacSign] || {emoji: "✨", vibe: "A wonderful journey awaits you."};
 
-      // Show result
       document.getElementById('result').classList.remove('hidden');
       document.getElementById('lifePath').textContent = lifePath;
       document.getElementById('zodiac').textContent = zodiacInfo.emoji;
@@ -171,11 +186,15 @@
       document.getElementById('lifeMsg').textContent = lifePathDescriptions[lifePath] || "A unique and powerful path is yours to create.";
       document.getElementById('zodiacMsg').textContent = zodiacInfo.vibe;
 
-      // Scroll to result smoothly
       document.getElementById('result').scrollIntoView({ behavior: "smooth" });
     }
 
-    // Bonus: Allow pressing Enter on date input
+    function refreshApp() {
+      document.getElementById('dob').value = '';
+      document.getElementById('result').classList.add('hidden');
+    }
+
+    // Allow pressing Enter
     document.getElementById('dob').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') tellFuture();
     });
