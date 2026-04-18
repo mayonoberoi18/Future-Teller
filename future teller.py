@@ -77,8 +77,8 @@ def get_zodiac(dob):
     return None, None
 
 # === Main App ===
-print("🌟 Welcome to Your Personal Future Teller App 🌟")
-print("Enter your date of birth (YYYY-MM-DD)")
+print("🌟 Welcome to Future Teller 🌟by Mayon Oberoi .illuminati")
+print("Enter your date of birth (YYYY-MM-DD) [without brackets]")
 
 dob = input("→ ").strip()
 
